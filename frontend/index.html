@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EcoSort AI | Waste Classification</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-icon">♻</div><div><b>EcoSort <span>AI</span></b><small>SMART WASTE LAB</small></div></div>
+  <div class="nav-label">WORKSPACE</div>
+  <button class="nav-btn active" data-page="overview"><span>◫</span> Overview</button>
+  <button class="nav-btn" data-page="classifier"><span>◎</span> Waste classifier</button>
+  <button class="nav-btn" data-page="dataset"><span>▦</span> Dataset explorer</button>
+  <button class="nav-btn" data-page="architecture"><span>⌘</span> System architecture</button>
+  <button class="nav-btn" data-page="history"><span>◷</span> Prediction history</button>
+  <div class="sidebar-bottom"><div class="status-dot"></div><div><b>API service</b><small id="apiStatus">Checking connection…</small></div></div>
+</aside>
+<main class="main">
+<header class="topbar"><div><div class="eyebrow">AI-POWERED RECYCLING</div><h1 id="pageTitle">Overview</h1></div><div class="top-actions"><span class="pill"><i></i> Local workspace</span><div class="avatar">KS</div></div></header>
+
+<section class="page active" id="page-overview">
+  <div class="hero"><div class="hero-copy"><div class="hero-tag">♻ &nbsp; WASTE CLASSIFICATION · CNN</div><h2>Make every item<br><em>count.</em></h2><p>Identify waste categories from an image and discover the next step toward smarter recycling.</p><button class="primary-btn" data-go="classifier">Classify an image <span>↗</span></button></div><div class="hero-art"><div class="orbit orbit1"></div><div class="orbit orbit2"></div><div class="leaf">♻</div><div class="floating f1">✦ &nbsp; AI vision</div><div class="floating f2">7 waste classes</div><div class="mini-card"><small>CLASSIFICATION PIPELINE</small><div class="pipeline"><b>IMG</b><span>→</span><b>CNN</b><span>→</span><b>RESULT</b></div></div></div></div>
+  <div class="stats-grid"><div class="stat-card"><div class="stat-top"><span>Waste categories</span><b class="stat-icon green">▦</b></div><strong>07</strong><small>Label classes in project</small></div><div class="stat-card"><div class="stat-top"><span>Predictions made</span><b class="stat-icon blue">◎</b></div><strong id="totalPredictions">0</strong><small>Saved in local history</small></div><div class="stat-card"><div class="stat-top"><span>Inference engine</span><b class="stat-icon purple">⌘</b></div><strong class="small-strong" id="engineName">Demo mode</strong><small id="engineCaption">Connect a trained CNN model</small></div><div class="stat-card"><div class="stat-top"><span>API status</span><b class="stat-icon amber">↗</b></div><strong class="small-strong" id="apiStat">Online</strong><small>Flask REST endpoint</small></div></div>
+  <div class="section-heading"><div><h3>Explore the workspace</h3><p>Every section is connected to the running Flask backend.</p></div></div>
+  <div class="feature-grid"><button class="feature-card" data-go="classifier"><span class="feature-icon">◎</span><b>Image classifier</b><p>Upload an image, preview it and request a prediction.</p><span class="feature-link">Open classifier →</span></button><button class="feature-card" data-go="dataset"><span class="feature-icon blue">▦</span><b>Dataset explorer</b><p>Review the seven label categories used by this project.</p><span class="feature-link">Explore labels →</span></button><button class="feature-card" data-go="architecture"><span class="feature-icon purple">⌘</span><b>Model architecture</b><p>See how frontend, API, preprocessing and CNN connect.</p><span class="feature-link">View architecture →</span></button></div>
+  <div class="notice"><span>ⓘ</span><div><b>Presentation note</b><p id="modelNotice">{{ model_status }} The interface works without a trained model, but demo predictions are simulated and must not be presented as measured CNN accuracy.</p></div></div>
+</section>
+
+<section class="page" id="page-classifier">
+ <div class="intro-row"><div><h2>Waste classifier</h2><p>Upload a waste photo to run the prediction workflow.</p></div><span class="pill"><i></i> POST /api/predict</span></div>
+ <div class="classifier-grid"><div class="panel upload-panel"><div class="panel-title"><div><h3>Upload an image</h3><p>JPG, PNG or WEBP · Max 12 MB</p></div><span class="step">01</span></div>
+ <label class="dropzone" id="dropzone" for="imageInput"><input id="imageInput" type="file" accept="image/*" hidden><div class="upload-symbol">↑</div><b>Drop your image here</b><span>or click to browse files</span><small>For best results, use one clearly visible item.</small></label>
+ <div class="preview-wrap" id="previewWrap" hidden><img id="preview" alt="Selected waste image preview"><div class="preview-meta"><b id="fileName">Image selected</b><button id="removeImage" class="text-btn">Remove</button></div></div>
+ <button id="classifyBtn" class="primary-btn wide" disabled>Classify waste <span>→</span></button><div id="uploadError" class="error-msg"></div></div>
+ <div class="panel result-panel"><div class="panel-title"><div><h3>Classification result</h3><p>Prediction returned by the backend</p></div><span class="step">02</span></div>
+ <div id="emptyResult" class="empty-result"><div class="empty-illustration">⌁</div><b>Your result will appear here</b><p>Choose an image and click “Classify waste” to begin.</p></div>
+ <div id="resultContent" hidden><div class="result-badge">✓ &nbsp; CLASSIFICATION COMPLETE</div><div class="result-category" id="resultCategory">Plastic</div><div class="confidence-row"><span>Confidence score</span><b id="confidenceText">--%</b></div><div class="meter"><div id="confidenceBar"></div></div><div class="result-meta"><span>Prediction engine</span><b id="resultMode">Demo</b></div><div class="result-meta"><span>Timestamp</span><b id="resultTime">--</b></div><div class="tip-box"><b>♻ Recycling tip</b><p id="resultTip"></p></div><button id="classifyAnother" class="secondary-btn wide">Classify another image</button></div></div></div>
+ <p class="footnote">Demo mode generates simulated labels. For real CNN predictions, add a trained <code>model.keras</code> file with the matching seven-class output order.</p>
+</section>
+
+<section class="page" id="page-dataset"><div class="intro-row"><div><h2>Dataset explorer</h2><p>Seven label groups described in the project presentation.</p></div><span class="pill">7 classes</span></div><div class="dataset-banner"><div><span class="hero-tag">DATASET IDENTIFICATION</span><h2>Garbage Classification / TrashNet</h2><p>Images should be resized to 224 × 224, converted to RGB and normalised before model inference.</p></div><div class="dataset-mark">▦</div></div><div class="dataset-grid" id="datasetGrid"><div class="loading">Loading categories…</div></div><div class="notice"><span>ⓘ</span><div><b>Dataset counts</b><p>Actual per-class image counts are not included because the dataset files were not supplied. Add your dataset and update counts before reporting dataset statistics.</p></div></div></section>
+
+<section class="page" id="page-architecture"><div class="intro-row"><div><h2>System architecture</h2><p>End-to-end flow from user upload to category output.</p></div><span class="pill">Frontend · Backend · CNN</span></div><div class="architecture-panel"><div class="flow-node"><div class="flow-icon">▧</div><b>Frontend</b><small>HTML · CSS · JavaScript</small><p>Upload image and preview</p></div><div class="flow-arrow">→</div><div class="flow-node"><div class="flow-icon blue">⇄</div><b>Flask API</b><small>POST /api/predict</small><p>Validates image request</p></div><div class="flow-arrow">→</div><div class="flow-node"><div class="flow-icon purple">⌘</div><b>Preprocessing</b><small>Python · Pillow · NumPy</small><p>RGB · 224 × 224</p></div><div class="flow-arrow">→</div><div class="flow-node"><div class="flow-icon amber">◉</div><b>CNN model</b><small>TensorFlow / Keras</small><p>7-class softmax output</p></div></div><div class="architecture-lower"><div class="panel"><h3>Model information</h3><div class="info-line"><span>Approach</span><b>CNN + Transfer Learning</b></div><div class="info-line"><span>Candidate backbones</span><b>MobileNetV2 / ResNet50 / EfficientNetB0</b></div><div class="info-line"><span>Input size</span><b>224 × 224 RGB</b></div><div class="info-line"><span>Output labels</span><b>7 categories</b></div><div class="info-line"><span>Model status</span><b id="architectureStatus">Checking…</b></div></div><div class="panel"><h3>API health check</h3><p class="muted">Test whether the frontend can reach the Flask backend.</p><button id="healthBtn" class="secondary-btn">Run health check</button><pre id="healthOutput">Click the button to test /api/status</pre><button id="modelInfoBtn" class="secondary-btn">View model details</button><pre id="modelOutput" hidden></pre></div></div></section>
+
+<section class="page" id="page-history"><div class="intro-row"><div><h2>Prediction history</h2><p>Recent results stored in the local SQLite database.</p></div><button id="refreshHistory" class="secondary-btn">↻ Refresh</button></div><div class="panel history-panel"><div class="history-head"><div><h3>Recent classifications</h3><p>Up to 30 most recent predictions</p></div><button id="clearHistory" class="text-btn danger">Clear history</button></div><div id="historyTable"><div class="loading">Loading history…</div></div></div></section>
+
+<footer>ECOSORT AI <span>•</span> Waste Classification for Recycling Using CNN and Transfer Learning <span class="footer-right">Academic project demo</span></footer>
+</main></div>
+<div class="toast" id="toast"></div>
+<script src="/static/app.js"></script>
+</body></html>
